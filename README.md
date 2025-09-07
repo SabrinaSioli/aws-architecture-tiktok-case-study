@@ -12,19 +12,19 @@ A proposta inclui diferentes fases de evolução da arquitetura: de uma soluçã
 
 ## Resultado Final dos diagramas
 #### Upload de vídeo no tiktok
-![upload-video](./upload-video.drawio.png)
+![upload-video](./images/upload-video.drawio.png)
 
 #### Stream de vídeo no tiktok
-![assistir-video](./assistir-video.drawio.png)
+![assistir-video](./images/assistir-video.drawio.png)
 
 #### Arquitetura 1 
-![1](./arquitetura1.png)
+![1](./images/arquitetura1.png)
 
 #### Arquitetura 2
-![2](./arquitetura2.png)
+![2](./images/arquitetura2.png)
 
 #### Arquitetura 3
-![3](./arquitetura3.png)
+![3](./images/arquitetura3.png)
 
 ---
 

@@ -77,7 +77,7 @@ Amazon S3 Glacier → arquivamento de vídeos com baixo acesso.
 
 ### Parte 1: Whindersson postou vídeo no tiktok
 
-![upload-video](./upload-video.drawio.png)
+![upload-video](./images/upload-video.drawio.png)
 
 **Fluxo da Requisição**
 - O usuário faz o upload de um vídeo.
@@ -94,7 +94,7 @@ Amazon S3 Glacier → arquivamento de vídeos com baixo acesso.
 
 ### Parte 2: Usuário assistiu o vídeo de Whindersson
 
-![assistir-video](./assistir-video.drawio.png)
+![assistir-video](./images/assistir-video.drawio.png)
 
 Fluxo da Requisição
 - O usuário faz uma requisição para acessar um vídeo.
@@ -114,7 +114,7 @@ Foco no upload, processamento e visualização de conteúdo.
 ### Reflexão
 A arquitetura se assemelha bastante ao que construi, porém aqui na mesma arquitetura é apresentado os dois fluxos no mesmo diagrama. Fiz separado para facilitar o meu entendimento em cada fluxo. Acredito que esteja faltando alguns dados em partes intermediárias e observei algumas definições mais técnicas como "Evento PUT - Novo vídeo". Ele utiliza a mais o AWS ElementalMedia Converter para converter o vídeo em diferentes qualidades. Além disso, ele separa a lambda function da etapa "Dados" (que fiz de forma genérica) e cria a etapa "pipeline de processamento".
 
-![1](./arquitetura1.png)
+![1](./images/arquitetura1.png)
 
 #### Fluxo do Processo
 - **Upload**: O cliente solicita uma URL pré-assinada do S3 via API Gateway e Lambda. O vídeo é enviado diretamente para o S3, sem passar pelo servidor de aplicação.
@@ -128,7 +128,7 @@ A arquitetura se assemelha bastante ao que construi, porém aqui na mesma arquit
 #### Reflexão
 Deixou claro o uso do DNS e deixou mais claro para mim o uso do banco de dados com o AWS elemental MediaConvert. Achei muito interessante o conceito de usar o CloudFront como facilitador de acesso a stream de vídeo no S3, era uma etapa que não tinha ficado tão clara na minha arquitetura.
 
-![2](./arquitetura2.png)
+![2](./images/arquitetura2.png)
 
 #### Melhorias Aplicadas
 Amazon Route 53: Como um serviço de DNS gerenciado, ele garante que os usuários sejam direcionados de forma eficiente para a sua aplicação.
@@ -145,7 +145,7 @@ O fluxo de upload permanece similar, mas o de visualização é aprimorado. Agor
 #### Reflexão
 Nessa etapa eu queria conhecer uma arquitetura mais completa (eu sei que ainda tem muitas abstrações, mas para mim é suficiente por enquanto). Achei super interessante o jeito que a arquitetura lida com o cache e a etapa de análise e recomendações, duas partes super relevantes e que eu não tinha colocado na minha arquitetura.
 
-![3](./arquitetura3.png)
+![3](./images/arquitetura3.png)
 
 #### Melhorias Aplicadas
 Amazon Aurora / RDS: Um banco de dados relacional é adicionado para gerenciar dados mais complexos e transacionais, como perfis de usuário, que exigem maior integridade e consistência.
