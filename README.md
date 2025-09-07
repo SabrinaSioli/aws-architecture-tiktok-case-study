@@ -7,6 +7,9 @@ A proposta inclui diferentes fases de evolução da arquitetura: de uma soluçã
 
 > ⚠️ Este material é apenas para estudo. Pode conter simplificações e não tem o objetivo de ensinar passo a passo ou servir como referência oficial.
 
+### ![Documentação Completa](./Arquitetura.md)
+
+
 ## Resultado Final dos diagramas
 #### Upload de vídeo no tiktok
 ![upload-video](./upload-video.drawio.png)
