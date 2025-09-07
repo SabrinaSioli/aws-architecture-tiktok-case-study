@@ -7,6 +7,22 @@ A proposta inclui diferentes fases de evolução da arquitetura: de uma soluçã
 
 > ⚠️ Este material é apenas para estudo. Pode conter simplificações e não tem o objetivo de ensinar passo a passo ou servir como referência oficial.
 
+## Resultado Final dos diagramas
+#### Upload de vídeo no tiktok
+![upload-video](./upload-video.drawio.png)
+
+#### Stream de vídeo no tiktok
+![assistir-video](./assistir-video.drawio.png)
+
+#### Arquitetura 1 
+![1](./arquitetura1.png)
+
+#### Arquitetura 2
+![2](./arquitetura2.png)
+
+#### Arquitetura 3
+![3](./arquitetura3.png)
+
 ---
 
 ## 📂 Sumário

@@ -77,7 +77,7 @@ Amazon S3 Glacier → arquivamento de vídeos com baixo acesso.
 
 ### Parte 1: Whindersson postou vídeo no tiktok
 
-Arquitetura
+![upload-video](./upload-video.drawio.png)
 
 **Fluxo da Requisição**
 - O usuário faz o upload de um vídeo.
@@ -94,7 +94,7 @@ Arquitetura
 
 ### Parte 2: Usuário assistiu o vídeo de Whindersson
 
-arquitetura
+![assistir-video](./assistir-video.drawio.png)
 
 Fluxo da Requisição
 - O usuário faz uma requisição para acessar um vídeo.
@@ -114,6 +114,7 @@ Foco no upload, processamento e visualização de conteúdo.
 ### Reflexão
 A arquitetura se assemelha bastante ao que construi, porém aqui na mesma arquitetura é apresentado os dois fluxos no mesmo diagrama. Fiz separado para facilitar o meu entendimento em cada fluxo. Acredito que esteja faltando alguns dados em partes intermediárias e observei algumas definições mais técnicas como "Evento PUT - Novo vídeo". Ele utiliza a mais o AWS ElementalMedia Converter para converter o vídeo em diferentes qualidades. Além disso, ele separa a lambda function da etapa "Dados" (que fiz de forma genérica) e cria a etapa "pipeline de processamento".
 
+![1](./arquitetura1.png)
 
 #### Fluxo do Processo
 - **Upload**: O cliente solicita uma URL pré-assinada do S3 via API Gateway e Lambda. O vídeo é enviado diretamente para o S3, sem passar pelo servidor de aplicação.
@@ -122,45 +123,12 @@ A arquitetura se assemelha bastante ao que construi, porém aqui na mesma arquit
 
 - **Visualização**: O aplicativo busca os metadados no DynamoDB e as URLs dos vídeos no S3, permitindo a exibição do conteúdo ao usuário.
 
-
-
-Snippet de código
-
-graph TD
-    subgraph Frontend [App/Web Frontend]
-        A[Usuário]
-    end
-
-    subgraph Backend [AWS Cloud]
-        subgraph APIGateway-Lambda [Serviços Serverless]
-            B[Amazon API Gateway] --> C[AWS Lambda<br/>(Lógica de Negócio)]
-        end
-
-        subgraph S3 [Armazenamento]
-            D[Amazon S3<br/>(Vídeos Brutos e Processados)]
-        end
-
-        subgraph Processamento [Pipeline de Processamento]
-            C -- "Dispara upload para" --> D
-            D -- "Evento PUT<br/>(Novo Vídeo)" --> E[AWS Lambda<br/>(Orquestrador)]
-            E -- "Envia Job para" --> F[AWS Elemental MediaConvert]
-            F -- "Salva Vídeo Otimizado em" --> D
-        end
-
-        subgraph Database [Banco de Dados]
-            G[Amazon DynamoDB<br/>(Metadados)]
-        end
-    end
-
-    A -- "Requisição de Upload" --> B
-    B --> C
-    A -- "Requisição de Visualização" --> C
-    C --> G
-    C -- "Pega URL do Vídeo" --> D
 ## Fase 2: Arquitetura Otimizada e Escalável (Intermediária)
 
 #### Reflexão
 Deixou claro o uso do DNS e deixou mais claro para mim o uso do banco de dados com o AWS elemental MediaConvert. Achei muito interessante o conceito de usar o CloudFront como facilitador de acesso a stream de vídeo no S3, era uma etapa que não tinha ficado tão clara na minha arquitetura.
+
+![2](./arquitetura2.png)
 
 #### Melhorias Aplicadas
 Amazon Route 53: Como um serviço de DNS gerenciado, ele garante que os usuários sejam direcionados de forma eficiente para a sua aplicação.
@@ -172,45 +140,12 @@ Elastic Load Balancer (ELB) + Amazon EC2 com Auto Scaling: A lógica de negócio
 Fluxo do Processo
 O fluxo de upload permanece similar, mas o de visualização é aprimorado. Agora, todas as requisições (vídeos e API) passam pelo CloudFront, que serve o conteúdo diretamente do cache, se disponível. Isso diminui a carga nos servidores de aplicação e garante uma experiência mais rápida para os usuários em qualquer lugar do mundo.
 
-Snippet de código
-
-graph TD
-    subgraph Frontend [App/Web Frontend]
-        A[Usuário]
-    end
-
-    subgraph Backend [AWS Cloud]
-        subgraph CDN-API-App [Entrega & Aplicação]
-            B[Amazon Route 53<br/>(DNS)] --> C[Amazon CloudFront<br/>(CDN)]
-            C -- "Requisições API/Conteúdo" --> D[Amazon API Gateway<br/>(API Endpoint)]
-            D --> E[Elastic Load Balancer<br/>(ELB)]
-            E -- "Distribui Tráfego" --> F[Amazon EC2<br/>(Servidores de Aplicação)]
-            F -- "Auto Scaling Group" --> F
-            C -- "Serve Vídeos/Estáticos" --> I[Amazon S3<br/>(Vídeos Otimizados)]
-        end
-
-        subgraph Processamento [Pipeline de Processamento de Vídeos]
-            G[Amazon S3<br/>(Vídeos Originais)]
-            F -- "Gera URL Pré-assinada" --> G
-            G -- "Evento PUT (Novo Vídeo)" --> H[AWS Lambda<br/>(Orquestrador de Vídeos)]
-            H -- "Envia Job para" --> J[AWS Elemental MediaConvert]
-            J -- "Salva Vídeo Otimizado em" --> I
-        end
-
-        subgraph Database [Banco de Dados]
-            K[Amazon DynamoDB<br/>(Metadados e Dados de Usuário)]
-            F -- "Query/Update" --> K
-            H -- "Atualiza Status" --> K
-        end
-    end
-
-    A -- "Acessa Domínio" --> B
-    A -- "Interage com o App" --> C
-
 ## Fase 3: Arquitetura Completa (Produção)
 
 #### Reflexão
 Nessa etapa eu queria conhecer uma arquitetura mais completa (eu sei que ainda tem muitas abstrações, mas para mim é suficiente por enquanto). Achei super interessante o jeito que a arquitetura lida com o cache e a etapa de análise e recomendações, duas partes super relevantes e que eu não tinha colocado na minha arquitetura.
+
+![3](./arquitetura3.png)
 
 #### Melhorias Aplicadas
 Amazon Aurora / RDS: Um banco de dados relacional é adicionado para gerenciar dados mais complexos e transacionais, como perfis de usuário, que exigem maior integridade e consistência.
@@ -220,51 +155,3 @@ Amazon ElastiCache (Redis): Introduz um cache em memória para armazenar dados f
 Amazon Kinesis Firehose + AWS EMR / SageMaker: Esta é a principal melhoria para a inteligência de negócio. O Kinesis Firehose coleta eventos em tempo real (curtidas, visualizações, etc.) e os armazena em um data lake no S3. Os serviços EMR e SageMaker processam esses dados para treinar modelos de machine learning, que são a base para o feed de recomendações "Para Você", um recurso essencial para a retenção de usuários.
 
 
-Snippet de código
-
-graph TD
-    subgraph Frontend [App/Web Frontend]
-        A[Usuário]
-    end
-
-    subgraph Backend [AWS Cloud]
-        subgraph ELB-EC2-ASG [Serviços de Aplicação]
-            B[Amazon Route 53<br/>(DNS)] --> C[Amazon CloudFront<br/>(CDN)]
-            C -- "Requests HTTP/S" --> D[Elastic Load Balancer<br/>(ELB)]
-            D -- "Distribui Tráfego" --> E[Amazon EC2<br/>(Servidores de Aplicação)]
-            E -- "Auto Scaling" --> E
-        end
-
-        subgraph Processamento [Pipeline de Processamento]
-            F[Amazon S3<br/>(Vídeos Originais)]
-            G[AWS Lambda<br/>(Orquestrador)]
-            H[AWS Elemental MediaConvert]
-            E -- "Gera URL para upload direto" --> F
-            F -- "Evento PUT" --> G
-            G -- "Envia Job" --> H
-            H -- "Salva Vídeo Otimizado" --> I[Amazon S3<br/>(Vídeos Otimizados)]
-        end
-
-        subgraph Database [Bancos de Dados & Cache]
-            J[Amazon Aurora/RDS<br/>(Dados Transacionais)]
-            K[Amazon DynamoDB<br/>(Metadados)]
-            L[Amazon ElastiCache<br/>(Cache de Conteúdo Popular)]
-            E -- "Query/Update" --> J
-            E -- "Query/Update" --> K
-            E -- "Acessa Cache" --> L
-            L -- "Popula Cache" --> K
-        end
-
-        subgraph Analytics [Análise & Recomendações]
-            M[Amazon Kinesis Firehose<br/>(Coleta de Eventos)]
-            N[Amazon EMR / SageMaker<br/>(ML e Análise)]
-            E -- "Envia Eventos (likes, views)" --> M
-            M -- "Salva em" --> O[Data Lake<br/>(S3)]
-            O -- "Treina Modelos" --> N
-        end
-    end
-
-    A -- "Acessa Domínio" --> B
-    A -- "Carrega Estáticos/Vídeos" --> C
-    A -- "API Calls" --> C
-    C -- "Acessa Cache" --> I
