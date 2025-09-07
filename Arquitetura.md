@@ -2,7 +2,7 @@
 
 Analisei o caso para a construção de uma arquitetura para um serviço de vídeos curtos como o **tiktok**.
 
-Fiz minha tentativa de criação e depois consultei as IAs em busca de validação sobre a minha tentativa e também auxilio na construções de possíveis melhorias na arquitetura.
+Fiz minha tentativa de criação e depois consultei IAs em busca de validação sobre a minha tentativa e também auxilio na construções de possíveis melhorias na arquitetura.
 
 ## Sumário
 -  Conceitos de Arquitetura
